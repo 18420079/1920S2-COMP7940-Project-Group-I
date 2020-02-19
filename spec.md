@@ -20,5 +20,6 @@ Chat bot have 2 response type:
 *  Finding Mask
 	1.	User input keyword "Mask"
 	2.	Bot return "Please input district"
-	3.	User input district or *
-	4.	Bot return "Addess of selling mask in *district* is *Address*"
+	3.	User input district or * 
+	4.	Bot return "Addess of selling mask in *district* is *Address* with *amount* of Box in stock"
+
