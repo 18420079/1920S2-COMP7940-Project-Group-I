@@ -14,7 +14,7 @@ Chat bot have 2 response type:
 	1.	User input keyword "Measure"
 	2.	Bot return a video of measure coronavirus.
 	3.	Bot return message "More?"
-	3.	User response "Yes" or "More"
+	3.	User response "Yes" or "More", "No" or ignore message
 	4.	if user response "Yes" or "More", return second video.
 
 *  Finding Mask
