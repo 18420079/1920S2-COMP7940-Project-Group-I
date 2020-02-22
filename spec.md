@@ -29,4 +29,7 @@ Chat bot have 2 response type:
 	7.	IF user input district, bot return "Do you want to search for other district?"
 	7. 	If user input "Yes", then repeat step2. If user input "No", Bot return "Thanks for the query and take care!"
 	
+* Unknown input (e.g. video, image, undefined word, etc.)
+	1.	Bot return "Please input "Measure" or "Mask" to getting service"
+	
 
