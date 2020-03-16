@@ -173,7 +173,6 @@ def handle_Mask(event,state):
         print(str(e))
         redis1.delete(event.source.user_id)
         redis1.delete("state_" + event.source.user_id)
-        raise
         return "Server connection fail, please try again later"     
 
 # Handler function for Text Message
@@ -189,7 +188,7 @@ def handle_TextMessage(event):
             msg = handle_Mask(event,0);
         else:
             msg = "Please input \"Measure\" or \"Mask\" to getting service"
-    elif currentmethod == "1":
+    elif currentmethod == b'1':
         if event.message.text.lower() == "yes" or event.message.text.lower() == "more":
             msg = handle_Measure(event,5)
         elif event.message.text.lower() == "no":
