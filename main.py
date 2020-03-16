@@ -132,7 +132,7 @@ def handle_Mask(event,state):
         redis1.set("state_" + event.source.user_id,state)
         
         if state == 0:
-            return "Please input district, \"*\" for all available stock or \"No\" to exit"
+            return "Please input district, or \"*\" to show all the shop address with inventory. To exit , please input \"No\""
         elif state ==  1:
             taradd = event.message.text.lower().replace(" ","").strip()
             if event.message.text == "*":
