@@ -7,6 +7,11 @@ import pathlib
 
 from argparse import ArgumentParser
 
+from urllib.request import urlopen
+import urllib.parse
+import json
+from datetime import timedelta, date
+
 from flask import Flask, request, abort
 from linebot import (
     LineBotApi, WebhookParser
@@ -173,6 +178,38 @@ def handle_Mask(event,state):
         print(str(e))
         redis1.delete(event.source.user_id)
         redis1.delete("state_" + event.source.user_id)
+        return "Server connection fail, please try again later"   
+    
+def handle_New(event,state):
+    try:
+        urlprefix = "https://api.data.gov.hk/v2/filter?q="
+        urlrequestdata = { "resource" : "http://www.chp.gov.hk/files/misc/latest_situation_of_reported_cases_wuhan_eng.csv", 'section' : 1, 'format' : "json", 'filters' : [] }
+        processdate = date.today()
+        tryint = 0
+        
+        data = "[]" 
+        while data == "[]" or tryint >= 14:
+            urlrequsetfilter = [[1, 'eq', [processdate.strftime("%d/%m/%Y")]]]
+            urlrequestdata['filters'] = urlrequsetfilter
+            jsontxt = json.dumps(urlrequestdata)
+            url = urlprefix + urllib.parse.quote_plus(jsontxt)
+            response = urlopen(url)
+            data = response.read().decode("utf-8")
+            tryint = tryint + 1
+            processdate = processdate + timedelta(days=-1)
+            
+        if tryint >= 14 or data == "[]":
+            raise KeyError('cannot load api before 14 days')
+                
+        rdata = json.loads(data)
+        
+        line_bot_api.reply_message(event.reply_token,
+                                    [TextSendMessage("As the latest record of DATA‧GOV‧HK at " + rdata[0]["As of date"] + "\nThe number of investigation cases : " + str(rdata[0]["Number of cases still hospitalised for investigation"]) + "\nThe number of confirmed cases : " + str(rdata[0]["Number of confirmed cases"]) + "\nThe number of death cases : " + str(rdata[0]["Number of death cases"]) + "\nThe number of discharge cases : " + str(rdata[0]["Number of discharge cases"])),                                      TextSendMessage("Thanks for using and take care!")
+                                    ])
+        return ""
+    except Exception as e:
+        print("error")
+        print(str(e))
         return "Server connection fail, please try again later"     
 
 # Handler function for Text Message
@@ -186,8 +223,10 @@ def handle_TextMessage(event):
             msg = handle_Measure(event,0)
         elif event.message.text.lower() == "mask":
             msg = handle_Mask(event,0);
+        elif event.message.text.lower() == "new":
+            msg = handle_New(event,0);
         else:
-            msg = "Please input \"Measure\" or \"Mask\" to getting service"
+            msg = "Please input \"Measure\", \"Mask\" or \"New\" to getting service"
     elif currentmethod == b'1':
         if event.message.text.lower() == "yes" or event.message.text.lower() == "more":
             msg = handle_Measure(event,5)
