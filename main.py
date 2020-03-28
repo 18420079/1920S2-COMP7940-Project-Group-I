@@ -180,7 +180,7 @@ def handle_Mask(event,state):
         redis1.delete("state_" + event.source.user_id)
         return "Server connection fail, please try again later"   
     
-def handle_New(event,state):
+def handle_News(event,state):
     try:
         urlprefix = "https://api.data.gov.hk/v2/filter?q="
         urlrequestdata = { "resource" : "http://www.chp.gov.hk/files/misc/latest_situation_of_reported_cases_wuhan_eng.csv", 'section' : 1, 'format' : "json", 'filters' : [] }
@@ -223,10 +223,10 @@ def handle_TextMessage(event):
             msg = handle_Measure(event,0)
         elif event.message.text.lower() == "mask":
             msg = handle_Mask(event,0);
-        elif event.message.text.lower() == "new":
-            msg = handle_New(event,0);
+        elif event.message.text.lower() == "news":
+            msg = handle_News(event,0);
         else:
-            msg = "Please input \"Measure\", \"Mask\" or \"New\" to getting service"
+            msg = "Please input \"Measure\", \"Mask\" or \"News\" to getting service"
     elif currentmethod == b'1':
         if event.message.text.lower() == "yes" or event.message.text.lower() == "more":
             msg = handle_Measure(event,5)

@@ -8,7 +8,7 @@ We would develop a LINE front end chatbot of this project which used to share pu
 
 Chat bot server is running on Heroku and it's data store in redis server.
 
-Chat bot have 2 response type:
+Chat bot have 2 + 1 response type:
 
 *  Measurement against coronavirus:
 	1.	User input keyword "Measure"
@@ -29,6 +29,16 @@ Chat bot have 2 response type:
 	7.	IF user input district, bot return "Do you want to search for other district?"
 	7. 	If user input "Yes", then repeat step2. If user input "No", Bot return "Thanks for the query and take care!"
 	
+*  Finding News:
+	1.	User input keyword "News"
+	2.	Bot return "
+			As the latest record of DATA‧GOV‧HK at *date:dd/mm/yyyy*
+			The number of investigation cases : *number*
+			The number of confirmed cases : *number* 
+			The number of death cases : *number* 
+			The number of discharge cases : *
+		"
+
 * Unknown input (e.g. video, image, undefined word, etc.)
 	1.	Bot return "Please input "Measure" or "Mask" to getting service"
 	
