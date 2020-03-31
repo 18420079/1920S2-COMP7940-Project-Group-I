@@ -11,6 +11,7 @@ from urllib.request import urlopen
 import urllib.parse
 import json
 from datetime import timedelta, date
+from sys import platform
 
 from flask import Flask, request, abort
 from linebot import (
@@ -188,8 +189,11 @@ def handle_News(event,state):
         tryint = 0
         
         data = "[]" 
-        while data == "[]" or tryint >= 14:
-            urlrequsetfilter = [[1, 'eq', [processdate.strftime("%d/%m/%Y")]]]
+        while data == "[]" and tryint <= 7:            
+            if platform == "win32":                
+                urlrequsetfilter = [[1, 'eq', [processdate.strftime("%#d/%#m/%Y")]]]
+            else:                
+                urlrequsetfilter = [[1, 'eq', [processdate.strftime("%-d/%-m/%Y")]]]                
             urlrequestdata['filters'] = urlrequsetfilter
             jsontxt = json.dumps(urlrequestdata)
             url = urlprefix + urllib.parse.quote_plus(jsontxt)
@@ -198,8 +202,8 @@ def handle_News(event,state):
             tryint = tryint + 1
             processdate = processdate + timedelta(days=-1)
             
-        if tryint >= 14 or data == "[]":
-            raise KeyError('cannot load api before 14 days')
+        if tryint >= 7 or data == "[]":
+            raise KeyError('cannot load api before 7 days')
                 
         rdata = json.loads(data)
         
