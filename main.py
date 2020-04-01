@@ -189,16 +189,23 @@ def handle_News(event,state):
         tryint = 0
         
         data = "[]" 
-        while data == "[]" and tryint <= 7:            
-            if platform == "win32":                
-                urlrequsetfilter = [[1, 'eq', [processdate.strftime("%#d/%#m/%Y")]]]
-            else:                
-                urlrequsetfilter = [[1, 'eq', [processdate.strftime("%-d/%-m/%Y")]]]                
+        while data == "[]" and tryint <= 7:
+            urlrequsetfilter = [[1, 'eq', [processdate.strftime("%d/%m/%Y")]]]
             urlrequestdata['filters'] = urlrequsetfilter
             jsontxt = json.dumps(urlrequestdata)
             url = urlprefix + urllib.parse.quote_plus(jsontxt)
             response = urlopen(url)
             data = response.read().decode("utf-8")
+            if data == "[]":
+                if platform == "win32":
+                    urlrequsetfilter = [[1, 'eq', [processdate.strftime("%#d/%#m/%Y")]]]
+                else:
+                    urlrequsetfilter = [[1, 'eq', [processdate.strftime("%-d/%-m/%Y")]]]
+                urlrequestdata['filters'] = urlrequsetfilter
+                jsontxt = json.dumps(urlrequestdata)
+                url = urlprefix + urllib.parse.quote_plus(jsontxt)
+                response = urlopen(url)
+                data = response.read().decode("utf-8")
             tryint = tryint + 1
             processdate = processdate + timedelta(days=-1)
             
