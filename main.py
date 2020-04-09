@@ -184,7 +184,7 @@ def handle_Mask(event,state):
 def handle_News(event,state):
     try:
         urlprefix = "https://api.data.gov.hk/v2/filter?q="
-        urlrequestdata = { "resource" : "http://www.chp.gov.hk/files/misc/latest_situation_of_reported_cases_wuhan_eng.csv", 'section' : 1, 'format' : "json", 'filters' : [] }
+        urlrequestdata = { "resource" : "http://www.chp.gov.hk/files/misc/latest_situation_of_reported_cases_covid_19_eng.csv", 'section' : 1, 'format' : "json", 'filters' : [] }
         processdate = date.today()
         tryint = 0
         
@@ -214,8 +214,15 @@ def handle_News(event,state):
                 
         rdata = json.loads(data)
         
+        hcase = str(rdata[0]["Number of cases still hospitalised for investigation"])
+        #GOV‧HK stop provide Number of confirmed cases after 6/4/2020
+        #use 5/4/2020 data, Confirm = 882, Hospitalised = 132, death = 4, Discharge = 206
+        #So new hospitalised = (NewConfirm - 882) + 132 - (NewDischarge - 206) - (NewDeath - 4)
+        if hcase == "":
+            hcase = str(rdata[0]["Number of confirmed cases"]-882+132-(rdata[0]["Number of discharge cases"]-206)-(rdata[0]["Number of death cases"]-4))
+        
         line_bot_api.reply_message(event.reply_token,
-                                    [TextSendMessage("As the latest record of DATA‧GOV‧HK at " + rdata[0]["As of date"] + "\nThe number of investigation cases : " + str(rdata[0]["Number of cases still hospitalised for investigation"]) + "\nThe number of confirmed cases : " + str(rdata[0]["Number of confirmed cases"]) + "\nThe number of death cases : " + str(rdata[0]["Number of death cases"]) + "\nThe number of discharge cases : " + str(rdata[0]["Number of discharge cases"])),                                      TextSendMessage("Thanks for using and take care!")
+                                    [TextSendMessage("As the latest record of DATA‧GOV‧HK at " + rdata[0]["As of date"] + "\nThe number of investigation cases : " + hcase + "\nThe number of confirmed cases : " + str(rdata[0]["Number of confirmed cases"]) + "\nThe number of death cases : " + str(rdata[0]["Number of death cases"]) + "\nThe number of discharge cases : " + str(rdata[0]["Number of discharge cases"])),                                      TextSendMessage("Thanks for using and take care!")
                                     ])
         return ""
     except Exception as e:
