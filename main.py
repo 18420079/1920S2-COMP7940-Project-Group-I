@@ -10,6 +10,7 @@ from argparse import ArgumentParser
 from urllib.request import urlopen
 import urllib.parse
 import json
+import math
 from datetime import timedelta, date
 from sys import platform
 
@@ -217,9 +218,10 @@ def handle_News(event,state):
         hcase = str(rdata[0]["Number of cases still hospitalised for investigation"])
         #GOV‧HK stop provide Number of confirmed cases after 6/4/2020
         #use 5/4/2020 data, Confirm = 882, Hospitalised = 132, death = 4, Discharge = 206
-        #So new hospitalised = (NewConfirm - 882) + 132 - (NewDischarge - 206) - (NewDeath - 4)
+        #(882-206)/132 = @a
+        #So new hospitalised = math.ceil((NewConfirm - NewDischarge - NewDeath)/@a)
         if hcase == "":
-            hcase = str(rdata[0]["Number of confirmed cases"]-882+132-(rdata[0]["Number of discharge cases"]-206)-(rdata[0]["Number of death cases"]-4))
+            hcase = str(int(math.ceil((rdata[0]["Number of confirmed cases"]-rdata[0]["Number of discharge cases"]-rdata[0]["Number of death cases"]) / (676/132))))
         
         line_bot_api.reply_message(event.reply_token,
                                     [TextSendMessage("As the latest record of DATA‧GOV‧HK at " + rdata[0]["As of date"] + "\nThe number of investigation cases : " + hcase + "\nThe number of confirmed cases : " + str(rdata[0]["Number of confirmed cases"]) + "\nThe number of death cases : " + str(rdata[0]["Number of death cases"]) + "\nThe number of discharge cases : " + str(rdata[0]["Number of discharge cases"])),                                      TextSendMessage("Thanks for using and take care!")
